@@ -5,6 +5,8 @@ import PositiveInfiniteSegment
 import Segment
 import Solution
 import exception.NoSolutionsException
+import normalizeNumberWithAccuracy
+import java.math.BigDecimal
 import kotlin.math.absoluteValue
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -43,59 +45,90 @@ class CubicPolynomial(private val secondCoeff: Double, private val thirdCoeff: D
         if (extremes.isEmpty()) {
             val funValueInZero = compute(0.0)
             return if (funValueInZero.absoluteValue <= epsilon) {
-                arrayOf(Solution(0.0, getMultiplicity(0.0)))
+                arrayOf(Solution(BigDecimal.ZERO, getMultiplicity(0.0, epsilon))).sortedBy { it.value }.toTypedArray()
             } else if (funValueInZero > epsilon) {
-                arrayOf(findSolution(epsilon, step, NegativeInfiniteSegment(0.0), 1))
+                arrayOf(findSolution(epsilon, step, NegativeInfiniteSegment(0.0), 1)).sortedBy { it.value }
+                    .toTypedArray()
             } else {
-                arrayOf(findSolution(epsilon, step, PositiveInfiniteSegment(0.0), 1))
+                arrayOf(findSolution(epsilon, step, PositiveInfiniteSegment(0.0), 1)).sortedBy { it.value }
+                    .toTypedArray()
             }
         }
 
         if (extremes.size == 1) {
-            val funValueInZero = compute(extremes[0])
-            return if (funValueInZero.absoluteValue <= epsilon) {
-                arrayOf(Solution(extremes[0], getMultiplicity(extremes[0])))
-            } else if (funValueInZero > epsilon) {
-                arrayOf(findSolution(epsilon, step, NegativeInfiniteSegment(extremes[0]), 1))
+            val funValueInExtremum = compute(extremes[0])
+            return if (funValueInExtremum.absoluteValue <= epsilon) {
+                arrayOf(
+                    Solution(
+                        normalizeNumberWithAccuracy(extremes[0], epsilon),
+                        getMultiplicity(extremes[0], epsilon)
+                    )
+                ).sortedBy { it.value }.toTypedArray()
+            } else if (funValueInExtremum > epsilon) {
+                arrayOf(findSolution(epsilon, step, NegativeInfiniteSegment(extremes[0]), 1)).sortedBy { it.value }
+                    .toTypedArray()
             } else {
-                arrayOf(findSolution(epsilon, step, PositiveInfiniteSegment(extremes[0]), 1))
+                arrayOf(findSolution(epsilon, step, PositiveInfiniteSegment(extremes[0]), 1)).sortedBy { it.value }
+                    .toTypedArray()
             }
         }
 
         if (extremes.size == 2) {
-            val maxFunValue = compute(extremes.max())
-            val minFunValue = compute(extremes.min())
+            val sortedExtremes = extremes.sortedBy { compute(it) }
+            val minFunValue = compute(sortedExtremes[0])
+            val maxFunValue = compute(sortedExtremes[1])
             if (maxFunValue < -epsilon && minFunValue < -epsilon) {
-                return arrayOf(findSolution(epsilon, step, PositiveInfiniteSegment(extremes.min()), 1))
+                return arrayOf(
+                    findSolution(
+                        epsilon,
+                        step,
+                        PositiveInfiniteSegment(sortedExtremes[0]),
+                        1
+                    )
+                ).sortedBy { it.value }.toTypedArray()
             } else if (minFunValue > epsilon && maxFunValue > epsilon) {
-                return arrayOf(findSolution(epsilon, step, NegativeInfiniteSegment(extremes.max()), 1))
+                return arrayOf(
+                    findSolution(
+                        epsilon,
+                        step,
+                        NegativeInfiniteSegment(sortedExtremes[1]),
+                        1
+                    )
+                ).sortedBy { it.value }.toTypedArray()
             } else if (maxFunValue > epsilon && minFunValue < -epsilon) {
                 return arrayOf(
-                    findSolution(epsilon, step, NegativeInfiniteSegment(extremes.max()), 1),
-                    findSolution(epsilon, step, Segment(extremes.max(), extremes.min()), 1),
-                    findSolution(epsilon, step, PositiveInfiniteSegment(extremes.min()), 1)
-                )
-            } else if (maxFunValue > epsilon && minFunValue.absoluteValue < epsilon) {
+                    findSolution(epsilon, step, NegativeInfiniteSegment(sortedExtremes[1]), 1),
+                    findSolution(epsilon, step, Segment(sortedExtremes[1], sortedExtremes[0]), 1),
+                    findSolution(epsilon, step, PositiveInfiniteSegment(sortedExtremes[0]), 1)
+                ).sortedBy { it.value }.toTypedArray()
+            } else if (maxFunValue > epsilon && minFunValue.absoluteValue <= epsilon) {
                 return arrayOf(
-                    Solution(extremes.min(), 2),
-                    findSolution(epsilon, step, NegativeInfiniteSegment(extremes.max()), 1)
-                )
+                    Solution(normalizeNumberWithAccuracy(sortedExtremes[0], epsilon), 2),
+                    findSolution(epsilon, step, NegativeInfiniteSegment(sortedExtremes[1]), 1)
+                ).sortedBy { it.value }.toTypedArray()
             } else if (maxFunValue.absoluteValue <= epsilon && minFunValue < -epsilon) {
                 return arrayOf(
-                    Solution(extremes.max(), 2),
-                    findSolution(epsilon, step, PositiveInfiniteSegment(extremes.min()), 1)
-                )
+                    Solution(normalizeNumberWithAccuracy(sortedExtremes[1], epsilon), 2),
+                    findSolution(epsilon, step, PositiveInfiniteSegment(sortedExtremes[0]), 1)
+                ).sortedBy { it.value }.toTypedArray()
             } else if (maxFunValue.absoluteValue <= epsilon && minFunValue.absoluteValue <= epsilon) {
-                return arrayOf(findSolution(epsilon, step, Segment(extremes.max(), extremes.min()), 3))
+                return arrayOf(
+                    findSolution(
+                        epsilon,
+                        step,
+                        Segment(sortedExtremes[1], sortedExtremes[0]),
+                        3
+                    )
+                ).sortedBy { it.value }.toTypedArray()
             }
         }
 
         throw NoSolutionsException("No solutions")
     }
 
-    private fun getMultiplicity(root: Double): Int {
-        if (firstDerivative.compute(root) == compute(root)) {
-            if (secondDerivative.compute(root) == compute(root)) {
+    private fun getMultiplicity(root: Double, epsilon: Double): Int {
+        if ((firstDerivative.compute(root) - compute(root)).absoluteValue <= epsilon) {
+            if ((secondDerivative.compute(root) - compute(root)).absoluteValue <= epsilon) {
                 return 3
             }
             return 2

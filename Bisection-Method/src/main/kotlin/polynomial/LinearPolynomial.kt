@@ -6,7 +6,7 @@ class LinearPolynomial(private val firstCoeff: Double, private val secondCoeff: 
     override fun compute(x: Double): Double = x * firstCoeff + secondCoeff
 
     override fun findSolutions(epsilon: Double, step: Double): Array<Solution> {
-        return arrayOf(Solution(-secondCoeff / firstCoeff, 1))
+        return arrayOf(Solution((-secondCoeff / firstCoeff).toBigDecimal(), 1))
     }
 
 }

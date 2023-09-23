@@ -1,6 +1,7 @@
 package polynomial
 
 import Solution
+import normalizeNumberWithAccuracy
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -18,11 +19,11 @@ class QuadraticPolynomial(
         }
         if (discriminant < epsilon && discriminant > -epsilon) {
             val root = (-secondCoeff) / 2 * thirdCoeff
-            return arrayOf(Solution(root, 2))
+            return arrayOf(Solution(root.toBigDecimal(), 2))
         }
         val root1 = (-secondCoeff - sqrt(discriminant)) / 2 * thirdCoeff
         val root2 = (-secondCoeff + sqrt(discriminant)) / 2 * thirdCoeff
-        return arrayOf(Solution(root1, 1), Solution(root2, 1))
+        return arrayOf(Solution(root1.toBigDecimal(), 1), Solution(root2.toBigDecimal(), 1))
     }
 
 }

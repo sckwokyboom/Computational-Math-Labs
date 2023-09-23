@@ -1,1 +1,3 @@
-data class Solution(val value: Double, val multiplicity: Int)
+import java.math.BigDecimal
+
+data class Solution(val value: BigDecimal, val multiplicity: Int)

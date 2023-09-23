@@ -1,5 +1,6 @@
 import polynomial.CubicPolynomial
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.util.*
 
 fun main(args: Array<String>) {

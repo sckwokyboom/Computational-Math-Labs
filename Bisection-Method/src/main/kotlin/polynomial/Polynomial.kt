@@ -3,6 +3,7 @@ package polynomial
 import Segment
 import Solution
 import exception.NoSolutionsException
+import normalizeNumberWithAccuracy
 import kotlin.Double.Companion.NEGATIVE_INFINITY
 import kotlin.Double.Companion.POSITIVE_INFINITY
 import kotlin.math.absoluteValue
@@ -40,7 +41,7 @@ abstract class Polynomial {
             val computed = compute(middle)
 
             if (computed.absoluteValue <= epsilon) {
-                return Solution(middle, expectedRootMultiplicity)
+                return Solution(normalizeNumberWithAccuracy(middle, epsilon), expectedRootMultiplicity)
             }
 
             if (compute(seg.leftBorder).sign != computed.sign) {
