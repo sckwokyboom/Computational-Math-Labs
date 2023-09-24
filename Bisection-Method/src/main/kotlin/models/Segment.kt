@@ -1,5 +1,6 @@
+package models
+
 open class Segment(var leftBorder: Double, var rightBorder: Double) {
-    private val length = rightBorder - leftBorder
     fun leftBorderStep(step: Double): Segment = Segment(leftBorder + step, rightBorder)
     fun rightBorderStep(step: Double): Segment = Segment(leftBorder, rightBorder + step)
     fun middle(): Double = (leftBorder + rightBorder) / 2

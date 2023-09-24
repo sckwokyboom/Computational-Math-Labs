@@ -1,6 +1,5 @@
-import polynomial.CubicPolynomial
-import java.math.BigDecimal
-import java.math.RoundingMode
+import exception.NoSolutionsException
+import models.polynomial.CubicPolynomial
 import java.util.*
 
 fun main(args: Array<String>) {
@@ -29,5 +28,9 @@ fun main(args: Array<String>) {
     }
     val step = 1.0
     val polynomial = CubicPolynomial(b, c, d)
-    polynomial.findSolutions(epsilon, step).forEach { println(it.value.toString() + " [" + it.multiplicity + "]") }
+    try {
+        polynomial.findRoots(epsilon, step).forEach { println(it.value.toString() + " [" + it.multiplicity + "]") }
+    } catch (e: NoSolutionsException) {
+        System.err.println(e.message)
+    }
 }

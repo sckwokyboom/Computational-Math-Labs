@@ -1,9 +1,8 @@
-package polynomial
+package models.polynomial
 
-import Segment
-import Solution
+import models.Segment
+import models.Solution
 import exception.NoSolutionsException
-import normalizeNumberWithAccuracy
 import kotlin.Double.Companion.NEGATIVE_INFINITY
 import kotlin.Double.Companion.POSITIVE_INFINITY
 import kotlin.math.absoluteValue
@@ -11,14 +10,14 @@ import kotlin.math.sign
 
 abstract class Polynomial {
     abstract fun compute(x: Double): Double
-    abstract fun findSolutions(epsilon: Double, step: Double): Array<Solution>
-    protected fun findSolution(
+    abstract fun findRoots(epsilon: Double, step: Double): Array<Solution>
+    protected fun findRoot(
         epsilon: Double,
         step: Double,
         segment: Segment,
         expectedRootMultiplicity: Int
     ): Solution {
-        assert(epsilon > 0)
+        assert(epsilon >= 0)
         if (compute(segment.leftBorder).sign == compute(segment.rightBorder).sign) {
             throw NoSolutionsException("The function has the same sign at the both edges of the segment")
         }
@@ -33,15 +32,21 @@ abstract class Polynomial {
     ): Solution {
         var seg = originalSegment
         while (true) {
+            if (compute(seg.rightBorder).sign == compute(seg.leftBorder).sign) {
+                throw NoSolutionsException(
+                    "The edges of the segment have the same sign."
+                )
+            }
+
             if (seg.leftBorder == NEGATIVE_INFINITY || seg.rightBorder == POSITIVE_INFINITY) {
-                seg = findBorder(seg, step)
+                seg = findNewSegment(seg, step)
                 return findRootByBisectionMethod(epsilon, step, seg, expectedRootMultiplicity)
             }
             val middle = seg.middle()
             val computed = compute(middle)
 
             if (computed.absoluteValue <= epsilon) {
-                return Solution(normalizeNumberWithAccuracy(middle, epsilon), expectedRootMultiplicity)
+                return Solution(normalizeNumberWithPrecision(middle, epsilon), expectedRootMultiplicity)
             }
 
             if (compute(seg.leftBorder).sign != computed.sign) {
@@ -52,7 +57,7 @@ abstract class Polynomial {
         }
     }
 
-    private fun findBorder(segment: Segment, step: Double): Segment {
+    private fun findNewSegment(segment: Segment, step: Double): Segment {
         var newSegment = segment
         if (newSegment.leftBorder == NEGATIVE_INFINITY) {
             newSegment = Segment(newSegment.rightBorder, newSegment.rightBorder)
@@ -68,12 +73,6 @@ abstract class Polynomial {
             while (leftBorderFunSign == compute(newSegment.rightBorder).sign) {
                 newSegment = newSegment.rightBorderStep(step)
             }
-        }
-
-        if (compute(newSegment.rightBorder).sign == compute(newSegment.leftBorder).sign) {
-            throw NoSolutionsException(
-                "The edges of the segment have the same sign."
-            )
         }
         return newSegment
     }

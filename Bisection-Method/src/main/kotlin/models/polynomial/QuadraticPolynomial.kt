@@ -1,23 +1,23 @@
-package polynomial
+package models.polynomial
 
-import Solution
-import normalizeNumberWithAccuracy
+import models.Solution
+import kotlin.math.absoluteValue
 import kotlin.math.pow
 import kotlin.math.sqrt
 
 class QuadraticPolynomial(
-    val firstCoeff: Double,
+    private val firstCoeff: Double,
     val secondCoeff: Double,
     val thirdCoeff: Double
 ) : Polynomial() {
     override fun compute(x: Double): Double = x.pow(2) * firstCoeff + x * secondCoeff + thirdCoeff
 
-    override fun findSolutions(epsilon: Double, step: Double): Array<Solution> {
+    override fun findRoots(epsilon: Double, step: Double): Array<Solution> {
         val discriminant = secondCoeff.pow(2) - 4 * firstCoeff * thirdCoeff
         if (discriminant < -epsilon) {
             return emptyArray()
         }
-        if (discriminant < epsilon && discriminant > -epsilon) {
+        if (discriminant.absoluteValue <= epsilon) {
             val root = (-secondCoeff) / 2 * thirdCoeff
             return arrayOf(Solution(root.toBigDecimal(), 2))
         }
