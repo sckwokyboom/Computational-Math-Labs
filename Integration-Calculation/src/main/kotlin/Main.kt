@@ -32,13 +32,34 @@ fun main(args: Array<String>) {
         }"
     )
     println(
+        "Accuracy: ${
+            TrapezoidalCalculator(precisionScale).calculateAccuracyOfMethodByRungeRule(
+                numOfElementarySegments
+            )
+        }\n"
+    )
+    println(
         "Integral value by Simpson's method: ${
             SimpsonCalculator(precisionScale).calculateIntegral(numOfElementarySegments)
         }"
     )
     println(
+        "Accuracy: ${
+            SimpsonCalculator(precisionScale).calculateAccuracyOfMethodByRungeRule(
+                numOfElementarySegments
+            )
+        }\n"
+    )
+    println(
         "Integral value by quadrature formula: ${
             QuadratureFormulaCalculator(precisionScale).calculateIntegral(
+                numOfElementarySegments
+            )
+        }"
+    )
+    println(
+        "Accuracy: ${
+            QuadratureFormulaCalculator(precisionScale).calculateAccuracyOfMethodByRungeRule(
                 numOfElementarySegments
             )
         }"
