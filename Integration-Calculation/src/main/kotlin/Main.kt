@@ -1,33 +1,46 @@
+import calculators.QuadratureFormulaCalculator
 import calculators.SimpsonCalculator
 import calculators.TrapezoidalCalculator
 import java.util.*
 
 fun main(args: Array<String>) {
     val numOfElementarySegments: Int
-    if (args.size == 1) {
-        numOfElementarySegments = args[0].toInt()
-        println("Your number of elementary segments: $numOfElementarySegments.")
-    } else {
-        println("Enter the number of elementary segments")
-        val scanner = Scanner(System.`in`)
-        numOfElementarySegments = scanner.nextInt()
+    var precisionScale = 10
+    when (args.size) {
+        1 -> {
+            numOfElementarySegments = args[0].toInt()
+        }
+
+        2 -> {
+            numOfElementarySegments = args[0].toInt()
+            precisionScale = args[1].toInt()
+        }
+
+        else -> {
+            println("Enter the number of elementary segments")
+            val scanner = Scanner(System.`in`)
+            numOfElementarySegments = scanner.nextInt()
+            println("Enter the precision scale")
+            precisionScale = scanner.nextInt()
+        }
     }
+    println("Your number of elementary segments: $numOfElementarySegments.")
+    println("Your precision scale: $precisionScale.\n")
     println(
         "Integral value by trapezoidal method: ${
-            TrapezoidalCalculator(10).calculateIntegral(numOfElementarySegments)
+            TrapezoidalCalculator(precisionScale).calculateIntegral(numOfElementarySegments)
         }"
     )
     println(
         "Integral value by Simpson's method: ${
-            SimpsonCalculator(10).calculateIntegral(numOfElementarySegments)
+            SimpsonCalculator(precisionScale).calculateIntegral(numOfElementarySegments)
         }"
     )
-//    println(
-//        "Integral value by quadrature formula: ${
-//            QuadratureFormulaCalculator().calculateIntegral(
-//                numOfElementarySegments,
-//                10
-//            )
-//        }"
-//    )
+    println(
+        "Integral value by quadrature formula: ${
+            QuadratureFormulaCalculator(precisionScale).calculateIntegral(
+                numOfElementarySegments
+            )
+        }"
+    )
 }
