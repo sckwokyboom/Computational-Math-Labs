@@ -29,7 +29,7 @@ fun main(args: Array<String>) {
     val step = 1.0
     val polynomial = CubicPolynomial(b, c, d)
     try {
-        polynomial.findRoots(epsilon, step).forEach { println(it.value.toString() + " [" + it.multiplicity + "]") }
+        polynomial.findRoots(epsilon, step).forEach { println(it.root.toString() + " [multiplicity = " + it.multiplicity + "]") }
     } catch (e: NoSolutionsException) {
         System.err.println(e.message)
     }

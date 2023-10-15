@@ -16,8 +16,8 @@ class SolutionTest {
             "The sizes of arrays with solutions differ."
         )
         for (i in expected.indices) {
-            val expectedValue = expected[i].value
-            val actualValue = actual[i].value
+            val expectedValue = expected[i].root
+            val actualValue = actual[i].root
             val expectedMultiplicity = expected[i].multiplicity
             val actualMultiplicity = expected[i].multiplicity
 

@@ -1,8 +1,8 @@
 package models.polynomial
 
+import exception.NoSolutionsException
 import models.Segment
 import models.Solution
-import exception.NoSolutionsException
 import kotlin.Double.Companion.NEGATIVE_INFINITY
 import kotlin.Double.Companion.POSITIVE_INFINITY
 import kotlin.math.absoluteValue
@@ -31,7 +31,9 @@ abstract class Polynomial {
         expectedRootMultiplicity: Int
     ): Solution {
         var seg = originalSegment
+        var iterationsCounter = 0
         while (true) {
+            iterationsCounter++
             if (compute(seg.rightBorder).sign == compute(seg.leftBorder).sign) {
                 throw NoSolutionsException(
                     "The edges of the segment have the same sign."
@@ -46,6 +48,7 @@ abstract class Polynomial {
             val computed = compute(middle)
 
             if (computed.absoluteValue <= epsilon) {
+                println("The number of iterations it took to find the ${Solution(normalizeNumberWithPrecision(middle, epsilon), expectedRootMultiplicity)}: $iterationsCounter")
                 return Solution(normalizeNumberWithPrecision(middle, epsilon), expectedRootMultiplicity)
             }
 

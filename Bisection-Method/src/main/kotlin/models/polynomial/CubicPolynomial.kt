@@ -1,10 +1,10 @@
 package models.polynomial
 
+import exception.NoSolutionsException
 import models.NegativeInfiniteSegment
 import models.PositiveInfiniteSegment
 import models.Segment
 import models.Solution
-import exception.NoSolutionsException
 import java.math.BigDecimal
 import kotlin.math.absoluteValue
 import kotlin.math.pow
@@ -40,7 +40,7 @@ class CubicPolynomial(private val secondCoeff: Double, private val thirdCoeff: D
 
     override fun findRoots(epsilon: Double, step: Double): Array<Solution> {
         return findUnsortedRoots(epsilon, step)
-            .sortedBy { it.value }
+            .sortedBy { it.root }
             .toTypedArray()
     }
 
