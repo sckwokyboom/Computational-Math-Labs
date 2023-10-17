@@ -36,6 +36,9 @@ tasks {
         archiveFileName.set("IntegrationCalculation.jar")
         destinationDirectory.set(file("./out/artifacts"))
         duplicatesStrategy = DuplicatesStrategy.INCLUDE
+        manifest {
+            attributes(mapOf("Main-Class" to "IntegrationCalculation"))
+        }
     }
 }
 
