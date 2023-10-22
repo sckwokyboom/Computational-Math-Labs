@@ -1,0 +1,8 @@
+.stack-work/
+.idea
+out/
+stack.yaml.lock
+LICENSE
+CHANGELOG.md
+Tridiagonal-Matrix-Algorithm.cabal
+*~
