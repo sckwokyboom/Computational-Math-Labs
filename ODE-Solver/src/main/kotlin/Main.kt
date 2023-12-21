@@ -1,11 +1,30 @@
 import schemas.ExactSolutionSchema
 import schemas.FirstSchema
 import schemas.SecondSchema
+import java.math.BigDecimal
+import java.math.MathContext.DECIMAL128
 import java.math.MathContext.UNLIMITED
+import java.util.*
 
-fun main() {
-    val (a, b, h) = listOf(0.0.toBigDecimal(UNLIMITED), 3.0.toBigDecimal(UNLIMITED), 0.003.toBigDecimal(UNLIMITED))
+fun main(args: Array<String>) {
+    val a = BigDecimal.ZERO
+    val b: BigDecimal
+    val h: BigDecimal
+//    val (a, b, h) = listOf(0.0.toBigDecimal(UNLIMITED), 3.0.toBigDecimal(UNLIMITED), 0.003.toBigDecimal(UNLIMITED))
+    when (args.size) {
+        2 -> {
+            b = args[0].toBigDecimal()
+            h = args[1].toBigDecimal()
+        }
 
+        else -> {
+            val scanner = Scanner(System.`in`)
+            println("Enter b:")
+            b = scanner.nextDouble().toBigDecimal()
+            println("Enter h:")
+            h = scanner.nextDouble().toBigDecimal()
+        }
+    }
     val exactSolutionSchema = ExactSolutionSchema()
     val firstSchema = FirstSchema()
     val secondSchema = SecondSchema()
@@ -21,7 +40,7 @@ fun main() {
             firstSchema,
             a,
             b,
-            h.divide(3.toBigDecimal(UNLIMITED), UNLIMITED)
+            h.divide(3.toBigDecimal(UNLIMITED), DECIMAL128)
         )
 
     val firstSchemaEvaluation = GridSchemeEvaluator(
