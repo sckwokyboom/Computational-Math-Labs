@@ -1,0 +1,5 @@
+package scheme
+
+class ImplicitScheme {
+
+}
