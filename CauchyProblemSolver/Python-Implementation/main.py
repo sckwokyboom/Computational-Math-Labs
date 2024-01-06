@@ -1,3 +1,4 @@
+import os
 import sys
 from copy import copy
 
@@ -150,6 +151,7 @@ def draw_implicit_scheme(start_point, end_point, spatial_step, r, time_limit, ti
             tmp_solutions = copy(solutions)
             tmp_solutions.insert(0, 1)
             tmp_solutions.append(0)
+            tmp_solutions[1] -= alpha
             plt.scatter(x_values, tmp_solutions, label=f"u(x, t) по неявной схеме при t = {"{:.3f}".format(cur_tau)}",
                         color="red", s=[7 for _ in range(len(x_values))])
             plt.legend()
@@ -216,12 +218,26 @@ def main():
 
     cur_frame_time = 0
     frame_times = []
+    main_frame_times = []
     while cur_frame_time < T and len(frame_times) < num_of_frames:
         frame_times.append(cur_frame_time)
         cur_frame_time += tau
 
+    cur_frame_time = 0
+    main_frame_times.append(0)
+    while cur_frame_time < T:
+        if round(cur_frame_time - T / 2) == 0:
+            main_frame_times.append(cur_frame_time)
+            break
+        cur_frame_time += tau
+    main_frame_times.append(T)
+
     frame_index = 0
     initial_conditions = create_initial_conditions(a, b, h, T, tau)
+
+    if not os.path.exists("figs"):
+        os.makedirs("figs")
+
     for frame_time in frame_times:
         plt.xlabel("x")
         plt.ylabel("u(x, t)")
@@ -230,7 +246,25 @@ def main():
         draw_exact_solution(a, b, h, frame_time)
         draw_implicit_scheme(a, b, h, r, T, tau, frame_time)
         draw_godunov_scheme(initial_conditions, T, h, a, b, r, tau, frame_time)
-        plt.savefig(f"fig{frame_index}.png")
+        plt.savefig(f"figs/fig{frame_index}.png")
+        plt.show()
+        plt.clf()
+        frame_index += 1
+
+    if not os.path.exists("main-figs"):
+        os.makedirs("main-figs")
+
+    frame_index = 0
+    for frame_time in main_frame_times:
+        plt.xlabel("x")
+        plt.ylabel("u(x, t)")
+        plt.ylim(-1.5, 1.5)
+        plt.xlim(-1.5, 10.5)
+        draw_exact_solution(a, b, h, frame_time)
+        draw_implicit_scheme(a, b, h, r, T, tau, frame_time)
+        draw_godunov_scheme(initial_conditions, T, h, a, b, r, tau, frame_time)
+        plt.savefig(f"main-figs/fig{frame_index}.png")
+        plt.show()
         plt.clf()
         frame_index += 1
 
